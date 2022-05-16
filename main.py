@@ -7,7 +7,7 @@ from sqlmodel import SQLModel
 from config import get_settings
 from handlers.middleware import ThrottlingMiddleware
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from utils.schedule import scheduler
 
@@ -18,15 +18,13 @@ dp = Dispatcher(bot=bot, loop=loop)
 
 
 async def on_startup(_):
-    await bot.send_message(chat_id=-1001753603071, text="да-да, пищи и моли прощения, жалкий человечешка")
-
-   # asyncio.create_task(scheduler())
+    asyncio.create_task(scheduler())
+    pass
 
 if __name__ == '__main__':
     from handlers import dp
     from sql.db import engine, SQLModel
-    asyncio.run(on_startup(1))
-    # SQLModel.metadata.create_all(engine)
-    #
-    # dp.middleware.setup(ThrottlingMiddleware())
-    # executor.start_polling(dp, skip_updates=False, on_startup=on_startup)
+    SQLModel.metadata.create_all(engine)
+
+    dp.middleware.setup(ThrottlingMiddleware())
+    executor.start_polling(dp, skip_updates=False)
