@@ -7,7 +7,7 @@ from sqlmodel import SQLModel
 from config import get_settings
 from handlers.middleware import ThrottlingMiddleware
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 from utils.schedule import scheduler
 

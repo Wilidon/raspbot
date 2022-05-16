@@ -6,7 +6,7 @@ from service.rasp import set_group, get_rasp
 from sql import crud
 from sql.models import Chat
 from utils import sstuapi
-from main import dp, __version__
+from raspbot import dp, __version__
 
 
 @dp.message_handler(commands=['start'])

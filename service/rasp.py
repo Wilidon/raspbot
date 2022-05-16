@@ -30,6 +30,7 @@ async def set_group(message: types.Message):
 
 
 async def get_rasp_by_day(chat_id, study_day):
+    is_today = True if study_day == 1 else False
     if study_day > 25:
         return False
     resp = await sstuapi.get_group(chat_id)
@@ -41,6 +42,17 @@ async def get_rasp_by_day(chat_id, study_day):
             break
     text = f"📆 Сегодня: {v['name']}\n\n"
     is_study_day = False
+    if is_today:
+        h, m = map(int,
+                   v['lessons'][len(v['lessons']) - 1]['lesson_hour'].split(
+                       ":"))
+        today = datetime.datetime.today()
+        last_pair_time = datetime.datetime(year=today.year, month=today.month,
+                                           day=today.day,
+                                           hour=h + 2, minute=m)
+        if today > last_pair_time:
+            return await get_rasp_by_day(chat_id=chat_id,
+                                         study_day=study_day + 1)
     for lesson in v['lessons']:
         is_study_day = True
         if len(lesson['lesson_teacher']) == 2:
@@ -70,8 +82,10 @@ async def get_rasp(message: types.Message):
     except:
         study_day = 1
     try:
-        resp = await get_rasp_by_day(chat_id=chat.group_id, study_day=study_day)
+        resp = await get_rasp_by_day(chat_id=chat.group_id,
+                                     study_day=study_day)
     except:
+        raise
         return "Расписание не найдено."
     if resp is False:
         return "Расписание не найдено."
